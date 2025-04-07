@@ -61,9 +61,6 @@
 
 Pomodoro is a plugin for [Microsoft PowerToys Run](https://github.com/microsoft/PowerToys) that brings the popular Pomodoro Technique to your keyboard. Simply type `pomodoro` followed by a command like `start`, `pause`, or `status` to manage your productivity sessions directly from your PowerToys Run interface.
 
-<div align="center">
-  <img src="Assets/pomodoro.png" alt="PowerToys" width="850">
-</div>
 
 ## ⚡ Easy Install
 
