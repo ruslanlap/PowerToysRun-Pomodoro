@@ -396,3 +396,7 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Windows Zone.Identifier files
+*:Zone.Identifier
+*Zone.Identifier
