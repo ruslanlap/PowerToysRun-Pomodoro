@@ -1,0 +1,14 @@
+{
+  "ID": "6884550EBA0A4A82B090AA19C01F9B38",
+  "ActionKeyword": "pomodoro",
+  "IsGlobal": false,
+  "Name": "Pomodoro",
+  "Author": "ruslanlap",
+  "Version": "1.0.0",
+  "Language": "csharp",
+  "Website": "https://github.com/ruslanlap/Community.PowerToys.Run.Plugin.Pomodoro",
+  "ExecuteFileName": "Community.PowerToys.Run.Plugin.Pomodoro.dll",
+  "IcoPathDark": "Images\\pomodoro.dark.png",
+  "IcoPathLight": "Images\\pomodoro.light.png",
+  "DynamicLoading": false
+}
