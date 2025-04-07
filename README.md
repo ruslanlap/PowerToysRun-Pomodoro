@@ -9,10 +9,7 @@
   
   <h1>⏱️ Pomodoro for PowerToys Run ⏱️</h1>
   <h3>Manage your productivity sessions directly from PowerToys Run</h3>
-  
-  <p align="center">
-    <img src="Assets/pomodoro.png" alt="Pomodoro Plugin Interface" width="650">
-  </p>
+
   
   ![PowerToys Compatible](https://img.shields.io/badge/PowerToys-Compatible-blue)
   ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey)
@@ -283,12 +280,6 @@ The plugin implements several PowerToys Run interfaces:
 - [ ] Custom notification sounds
 - [ ] Weekly productivity analytics
 - [ ] Task labeling for Pomodoro sessions
-- [ ] Multiple timer presets
-- [ ] Integration with calendar apps
-- [ ] Focus mode that blocks distractions
-- [ ] Voice commands for timer control
-- [ ] Productivity reports and insights
-- [ ] Custom themes for Pomodoro window
 
 ### 🚶‍♂️ My Pomodoro Journey
 
