@@ -80,10 +80,8 @@ Pomodoro is a plugin for [Microsoft PowerToys Run](https://github.com/microsoft/
 - ⏱️ **Start, Pause, and Reset Pomodoro Sessions** - Manage your work sessions with simple commands
 - 🍅 **Visual Countdown** - See time remaining in your current session
 - 🔔 **End-of-Session Alerts** - Get notified when your session ends with sound or visual cues
-- 📊 **Session Tracking** - Keep track of completed Pomodoro sessions
 - 🌙 **Break Management** - Automatically switch between work sessions and breaks
 - ⚙️ **Configurable Session Length** - Customize work and break durations to fit your workflow
-- 🔁 **Daily Productivity History** - View your productivity patterns over time
 
 ## 🎬 Demo Gallery
 
