@@ -151,8 +151,8 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro.Services
                 {
                     return Task.FromResult<TimerStatus?>(new TimerStatus
                     {
-                        Id = timer.Id,
-                        Title = timer.Title,
+                        Id = timer.Id ?? string.Empty,
+                        Title = timer.Title ?? string.Empty,
                         TotalSeconds = timer.TotalSeconds,
                         RemainingSeconds = timer.RemainingSeconds,
                         IsPaused = timer.IsPaused,
