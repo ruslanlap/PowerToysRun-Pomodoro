@@ -8,8 +8,10 @@
         Title="Pomodoro Timer" 
         Height="380" 
         Width="380"
+        MinHeight="220"
+        MinWidth="220"
         WindowStartupLocation="CenterScreen"
-        ResizeMode="NoResize"
+        ResizeMode="CanResizeWithGrip"
         ShowInTaskbar="True"
         Topmost="True"
         Background="Transparent"
@@ -144,6 +146,8 @@
                 </Border.Background>
             </Border>
 
+            <!-- Main content scales with the window via Viewbox -->
+            <Viewbox Stretch="Uniform" StretchDirection="Both">
             <!-- Main Layout Grid -->
             <Grid Margin="20">
                 <Grid.RowDefinitions>
@@ -155,16 +159,6 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-
-                <!-- Close Button (Top Right) - Windows 11 Style -->
-                <Button Content="✕" 
-                        Style="{StaticResource Win11Button}"
-                        HorizontalAlignment="Right" 
-                        VerticalAlignment="Top" 
-                        Padding="10,2"
-                        FontSize="12"
-                        Click="CloseButton_Click"
-                        Background="Transparent"/>
 
                 <!-- Tomato Image Added -->
                 <Image x:Name="StaticBallImage"
@@ -257,6 +251,31 @@
                             Click="BtnStop_Click"/>
                 </StackPanel>
             </Grid>
+            </Viewbox>
+
+            <!-- Window Controls (Top Right) - Windows 11 Style.
+                 Kept outside the Viewbox so they stay anchored to the window's
+                 top-right corner and don't move when the window is resized. -->
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Panel.ZIndex="1"
+                        Margin="0,8,8,0">
+                <Button Content="−"
+                        Style="{StaticResource Win11Button}"
+                        Padding="10,2"
+                        FontSize="12"
+                        ToolTip="Minimize"
+                        Click="MinimizeButton_Click"
+                        Background="Transparent"/>
+                <Button Content="✕"
+                        Style="{StaticResource Win11Button}"
+                        Padding="10,2"
+                        FontSize="12"
+                        ToolTip="Close"
+                        Click="CloseButton_Click"
+                        Background="Transparent"/>
+            </StackPanel>
         </Grid>
     </Border>
 

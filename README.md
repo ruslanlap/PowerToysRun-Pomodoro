@@ -82,6 +82,7 @@ Pomodoro is a plugin for [Microsoft PowerToys Run](https://github.com/microsoft/
 - 🔔 **End-of-Session Alerts** - Get notified when your session ends with sound or visual cues
 - 🌙 **Break Management** - Automatically switch between work sessions and breaks
 - ⚙️ **Configurable Session Length** - Customize work and break durations to fit your workflow
+- 🪟 **Resizable & Minimizable Timer Window** - Resize the timer window with the corner grip, minimize it to the taskbar, and it remembers your preferred size and position between sessions
 
 ## 🎬 Demo Gallery
 

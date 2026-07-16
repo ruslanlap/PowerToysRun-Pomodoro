@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Reflection;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -197,6 +198,7 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            RestoreWindowGeometry();
             LoadStaticImage();
             ApplyWindowTransparency();
         }
@@ -630,6 +632,18 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
             BtnStop_Click(sender, e);
         }
 
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                WindowState = WindowState.Minimized;
+            }
+            catch (Exception ex)
+            {
+                Log.Exception("Error minimizing window", ex, GetType());
+            }
+        }
+
         private void Border_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (!_isClosing && e.ChangedButton == MouseButton.Left)
@@ -648,8 +662,120 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
         private void PomodoroResultWindow_Closing(object? sender, CancelEventArgs e)
         {
             _isClosing = true;
+            SaveWindowGeometry();
             _timer.Stop();
         }
+
+        /// <summary>
+        /// Gets the path to the file used to persist the timer window size and position.
+        /// </summary>
+        private static string GetWindowStateFilePath()
+        {
+            string dir = System.IO.Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                "PowerToysRun-Pomodoro");
+            Directory.CreateDirectory(dir);
+            return System.IO.Path.Combine(dir, "window-state.json");
+        }
+
+        /// <summary>
+        /// Restores the previously persisted window size and position, if any.
+        /// </summary>
+        private void RestoreWindowGeometry()
+        {
+            try
+            {
+                string path = GetWindowStateFilePath();
+                if (!File.Exists(path))
+                {
+                    return;
+                }
+
+                var state = JsonSerializer.Deserialize<WindowGeometry>(File.ReadAllText(path));
+                if (state == null || state.Width <= 0 || state.Height <= 0)
+                {
+                    return;
+                }
+
+                // Clamp the size to the window's configured minimum.
+                double width = Math.Max(state.Width, MinWidth);
+                double height = Math.Max(state.Height, MinHeight);
+
+                // Ensure the saved position is visible on the current virtual screen
+                // before applying it, so the window can never open off-screen.
+                double virtualLeft = SystemParameters.VirtualScreenLeft;
+                double virtualTop = SystemParameters.VirtualScreenTop;
+                double virtualRight = virtualLeft + SystemParameters.VirtualScreenWidth;
+                double virtualBottom = virtualTop + SystemParameters.VirtualScreenHeight;
+
+                bool onScreen = state.Left + width > virtualLeft
+                    && state.Left < virtualRight
+                    && state.Top + height > virtualTop
+                    && state.Top < virtualBottom;
+
+                Width = width;
+                Height = height;
+
+                if (onScreen)
+                {
+                    WindowStartupLocation = WindowStartupLocation.Manual;
+                    Left = state.Left;
+                    Top = state.Top;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Exception("Error restoring window geometry", ex, GetType());
+            }
+        }
+
+        /// <summary>
+        /// Persists the current window size and position for the next session.
+        /// </summary>
+        private void SaveWindowGeometry()
+        {
+            try
+            {
+                // Use RestoreBounds so a minimized/maximized window still saves its
+                // normal size and position rather than the transient state values.
+                Rect bounds = WindowState == WindowState.Normal
+                    ? new Rect(Left, Top, Width, Height)
+                    : RestoreBounds;
+
+                if (bounds.IsEmpty || bounds.Width <= 0 || bounds.Height <= 0)
+                {
+                    return;
+                }
+
+                var state = new WindowGeometry
+                {
+                    Left = bounds.Left,
+                    Top = bounds.Top,
+                    Width = bounds.Width,
+                    Height = bounds.Height,
+                };
+
+                File.WriteAllText(GetWindowStateFilePath(), JsonSerializer.Serialize(state));
+            }
+            catch (Exception ex)
+            {
+                Log.Exception("Error saving window geometry", ex, GetType());
+            }
+        }
+    }
+
+    /// <summary>
+    /// Serializable size and position of the Pomodoro timer window.
+    /// </summary>
+    internal sealed class WindowGeometry
+    {
+        public double Left { get; set; }
+
+        public double Top { get; set; }
+
+        public double Width { get; set; }
+
+        public double Height { get; set; }
     }
 
     // ProgressBar width converter needed for the custom style
