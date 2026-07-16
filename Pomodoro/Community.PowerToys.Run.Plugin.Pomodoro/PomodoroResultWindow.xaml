@@ -160,26 +160,6 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <!-- Window Controls (Top Right) - Windows 11 Style -->
-                <StackPanel Orientation="Horizontal"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Top">
-                    <Button Content="−"
-                            Style="{StaticResource Win11Button}"
-                            Padding="10,2"
-                            FontSize="12"
-                            ToolTip="Minimize"
-                            Click="MinimizeButton_Click"
-                            Background="Transparent"/>
-                    <Button Content="✕"
-                            Style="{StaticResource Win11Button}"
-                            Padding="10,2"
-                            FontSize="12"
-                            ToolTip="Close"
-                            Click="CloseButton_Click"
-                            Background="Transparent"/>
-                </StackPanel>
-
                 <!-- Tomato Image Added -->
                 <Image x:Name="StaticBallImage"
                        Grid.Row="1" 
@@ -272,6 +252,30 @@
                 </StackPanel>
             </Grid>
             </Viewbox>
+
+            <!-- Window Controls (Top Right) - Windows 11 Style.
+                 Kept outside the Viewbox so they stay anchored to the window's
+                 top-right corner and don't move when the window is resized. -->
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Panel.ZIndex="1"
+                        Margin="0,8,8,0">
+                <Button Content="−"
+                        Style="{StaticResource Win11Button}"
+                        Padding="10,2"
+                        FontSize="12"
+                        ToolTip="Minimize"
+                        Click="MinimizeButton_Click"
+                        Background="Transparent"/>
+                <Button Content="✕"
+                        Style="{StaticResource Win11Button}"
+                        Padding="10,2"
+                        FontSize="12"
+                        ToolTip="Close"
+                        Click="CloseButton_Click"
+                        Background="Transparent"/>
+            </StackPanel>
         </Grid>
     </Border>
 
