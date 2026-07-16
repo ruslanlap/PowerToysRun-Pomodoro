@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Reflection;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -690,7 +691,7 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
                     return;
                 }
 
-                var state = Newtonsoft.Json.JsonConvert.DeserializeObject<WindowGeometry>(File.ReadAllText(path));
+                var state = JsonSerializer.Deserialize<WindowGeometry>(File.ReadAllText(path));
                 if (state == null || state.Width <= 0 || state.Height <= 0)
                 {
                     return;
@@ -754,7 +755,7 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
                     Height = bounds.Height,
                 };
 
-                File.WriteAllText(GetWindowStateFilePath(), Newtonsoft.Json.JsonConvert.SerializeObject(state));
+                File.WriteAllText(GetWindowStateFilePath(), JsonSerializer.Serialize(state));
             }
             catch (Exception ex)
             {
