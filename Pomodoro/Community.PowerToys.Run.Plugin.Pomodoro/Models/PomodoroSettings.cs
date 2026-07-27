@@ -116,6 +116,56 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro.Models
         // Current pomodoro count in the cycle
         public int CurrentPomodoroCount { get; set; } = 0;
 
+        // ─── Media Control ───
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to toggle media play/pause on session start.
+        /// </summary>
+        public bool MediaPlayOnSessionStart { get; set; } = false;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to toggle media play/pause on session end.
+        /// </summary>
+        public bool MediaPauseOnSessionEnd { get; set; } = false;
+
+        // ─── CLI Hooks ───
+
+        /// <summary>
+        /// Gets or sets the CLI command to run when a Pomodoro session starts.
+        /// Tokens: {event}, {type}, {minutes}
+        /// </summary>
+        public string HookOnPomodoroStart { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the CLI command to run when a Pomodoro session ends.
+        /// </summary>
+        public string HookOnPomodoroEnd { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the CLI command to run when any break starts.
+        /// </summary>
+        public string HookOnBreakStart { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the CLI command to run when any break ends.
+        /// </summary>
+        public string HookOnBreakEnd { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the CLI command to run when the timer is paused.
+        /// </summary>
+        public string HookOnPause { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the CLI command to run when the timer is resumed.
+        /// </summary>
+        public string HookOnResume { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets the CLI command to run when the timer is stopped manually.
+        /// </summary>
+        public string HookOnStop { get; set; } = string.Empty;
+
         /// <summary>
         /// Adds a timer duration to the recent list.
         /// </summary>
