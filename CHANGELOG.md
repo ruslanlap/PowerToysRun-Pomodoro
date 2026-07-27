@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.1.1](https://github.com/ruslanlap/PowerToysRun-Pomodoro/compare/v1.1.0...v1.1.1) (2026-07-27)
+
+
+### Bug Fixes
+
+* correct Website URL in plugin.json ([45c3294](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/45c329417911b7b27d20b1b50117d0a1e9df9e94))
+
+
+### Documentation
+
+* update badges and download buttons to current state ([d03de27](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/d03de27a8a546c41d55f2237e2f55cdf27f2f304))
+
+
+### CI/CD
+
+* add tag push trigger + manual dispatch support for build workflow ([309da55](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/309da55f8cf6078bcd84de025d53f06bfa0de829))
+
+
+### Maintenance
+
+* update release-please config with technical changelog sections ([d6424c7](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/d6424c71cc1675ca68a4c0e8c37113b3f04dcb39))
+
 ## [1.1.0](https://github.com/ruslanlap/PowerToysRun-Pomodoro/compare/v1.0.0...v1.1.0) (2026-07-27)
 
 
