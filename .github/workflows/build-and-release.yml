@@ -4,6 +4,10 @@ on:
   # Triggered when release-please creates a published release
   release:
     types: [published]
+  # Fallback: trigger when a version tag is pushed
+  push:
+    tags:
+      - 'v*'
   # Manual trigger for testing
   workflow_dispatch:
 
@@ -104,10 +108,26 @@ jobs:
   upload:
     needs: build
     runs-on: ubuntu-latest
-    # Only upload to the release if this was triggered by a release event
-    if: github.event_name == 'release'
+    # Upload to release if triggered by release event OR manual dispatch
+    if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get release tag
+        id: get_tag
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            TAG="${{ github.event.release.tag_name }}"
+          else
+            # For manual dispatch: read version from plugin.json
+            VERSION=$(python3 -c "import json; print(json.load(open('Pomodoro/Community.PowerToys.Run.Plugin.Pomodoro/plugin.json'))['Version'])")
+            TAG="v$VERSION"
+          fi
+          echo "TAG=$TAG" >> $GITHUB_OUTPUT
+
       - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
@@ -124,4 +144,4 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release upload "${{ github.event.release.tag_name }}" release-assets/* --clobber
+          gh release upload "${{ steps.get_tag.outputs.TAG }}" release-assets/* --clobber
