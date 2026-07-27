@@ -14,16 +14,17 @@
   ![PowerToys Compatible](https://img.shields.io/badge/PowerToys-Compatible-blue)
   ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey)
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-  ![Maintenance](https://img.shields.io/maintenance/yes/2025)
-  ![C#](https://img.shields.io/badge/C%23-.NET-512BD4)
+  ![Maintenance](https://img.shields.io/maintenance/yes/2026)
+  [![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/download/dotnet/9.0)
   ![Version](https://img.shields.io/github/v/release/ruslanlap/PowerToysRun-Pomodoro)
+  [![CI](https://img.shields.io/github/actions/workflow/status/ruslanlap/PowerToysRun-Pomodoro/build-and-release.yml?label=CI)](https://github.com/ruslanlap/PowerToysRun-Pomodoro/actions/workflows/build-and-release.yml)
   ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
   [![GitHub stars](https://img.shields.io/github/stars/ruslanlap/PowerToysRun-Pomodoro)](https://github.com/ruslanlap/PowerToysRun-Pomodoro/stargazers)
   [![GitHub issues](https://img.shields.io/github/issues/ruslanlap/PowerToysRun-Pomodoro)](https://github.com/ruslanlap/PowerToysRun-Pomodoro/issues)
   [![GitHub release (latest by date)](https://img.shields.io/github/v/release/ruslanlap/PowerToysRun-Pomodoro)](https://github.com/ruslanlap/PowerToysRun-Pomodoro/releases/latest)
   [![GitHub all releases](https://img.shields.io/github/downloads/ruslanlap/PowerToysRun-Pomodoro/total)](https://github.com/ruslanlap/PowerToysRun-Pomodoro/releases)
-  ![Made with Love](https://img.shields.io/badge/Made%20with-❤️-red)
-  ![Awesome](https://img.shields.io/badge/Awesome-Yes-orange)
+  ![Last Commit](https://img.shields.io/github/last-commit/ruslanlap/PowerToysRun-Pomodoro)
+  [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0-FE719A?logo=conventionalcommits)](https://conventionalcommits.org)
 </div>
 
 <div align="center">
@@ -61,7 +62,7 @@ Pomodoro is a plugin for [Microsoft PowerToys Run](https://github.com/microsoft/
 
 ## ⚡ Easy Install
 
-<div align="">
+<div align="center">
   <a href="https://github.com/ruslanlap/PowerToysRun-Pomodoro/releases/latest/download/Pomodoro-x64.zip">
     <img src="https://img.shields.io/badge/⬇️_DOWNLOAD-POMODORO_PLUGIN-blue?style=for-the-badge&logo=github" alt="Download Pomodoro Plugin">
   </a>
@@ -207,7 +208,7 @@ Contributions are welcome! Here's how you can help:
 
 ### Conventional Commits & Automatic Releases
 
-This project uses [release-please](https://github.com/googleapis/release-please) bot for automated versioning and releases. Use [Conventional Commits](https://www.conventionalcommits.org/) format:
+This project uses [release-please](https://github.com/googleapis/release-please) bot for automated versioning and releases. Use [Conventional Commits](https://conventionalcommits.org/) format:
 
 | Commit type | Bump | Example |
 |-------------|------|---------|
@@ -215,7 +216,7 @@ This project uses [release-please](https://github.com/googleapis/release-please)
 | `feat:` | Minor (1.**0**.0 → 1.**1**.0) | `feat: add break reminders` |
 | `BREAKING CHANGE:` | Major (**1**.0.0 → **2**.0.0) | `feat!: new config format` |
 
-When you push to `main`, the bot opens a "release PR" with a changelog and version bump. Merge it to publish a new release automatically.
+When you push to `master`, the bot opens a "release PR" with a changelog and version bump. Merge it to publish a new release automatically.
 
 Please make sure to update tests as appropriate.
 
@@ -359,7 +360,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 The Pomodoro plugin is built using:
 
-- C# and .NET
+- C# and .NET 9
 - WPF for the UI components
 - System.Timers.Timer for countdown functionality
 - Windows notification API for alerts
