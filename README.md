@@ -16,7 +16,7 @@
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
   ![Maintenance](https://img.shields.io/maintenance/yes/2025)
   ![C#](https://img.shields.io/badge/C%23-.NET-512BD4)
-  ![Version](https://img.shields.io/badge/version-v1.0.0-brightgreen)
+  ![Version](https://img.shields.io/github/v/release/ruslanlap/PowerToysRun-Pomodoro)
   ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
   [![GitHub stars](https://img.shields.io/github/stars/ruslanlap/PowerToysRun-Pomodoro)](https://github.com/ruslanlap/PowerToysRun-Pomodoro/stargazers)
   [![GitHub issues](https://img.shields.io/github/issues/ruslanlap/PowerToysRun-Pomodoro)](https://github.com/ruslanlap/PowerToysRun-Pomodoro/issues)
@@ -27,11 +27,11 @@
 </div>
 
 <div align="center">
-  <a href="https://github.com/ruslanlap/PowerToysRun-Pomodoro/releases/download/v1.0.0/Pomodoro-x64.zip">
-    <img src="https://img.shields.io/badge/Download%20Latest%20Release-x64-blue?style=for-the-badge&logo=github" alt="Download Latest Release" />
+  <a href="https://github.com/ruslanlap/PowerToysRun-Pomodoro/releases/latest/download/Pomodoro-x64.zip">
+    <img src="https://img.shields.io/badge/Download%20Latest%20Release-x64-blue?style=for-the-badge&logo=github" alt="Download Latest Release x64" />
   </a>
-  <a href="https://github.com/ruslanlap/PowerToysRun-Pomodoro/releases/download/v1.0.0/Pomodoro-ARM64.zip">
-    <img src="https://img.shields.io/badge/Download%20Latest%20Release-ARM64-blue?style=for-the-badge&logo=github" alt="Download Latest Release" />
+  <a href="https://github.com/ruslanlap/PowerToysRun-Pomodoro/releases/latest/download/Pomodoro-ARM64.zip">
+    <img src="https://img.shields.io/badge/Download%20Latest%20Release-ARM64-blue?style=for-the-badge&logo=github" alt="Download Latest Release ARM64" />
   </a>
 </div>
 
@@ -62,7 +62,7 @@ Pomodoro is a plugin for [Microsoft PowerToys Run](https://github.com/microsoft/
 ## ⚡ Easy Install
 
 <div align="">
-  <a href="https://github.com/ruslanlap/PowerToysRun-Pomodoro/releases/download/v1.0.0/Pomodoro-x64.zip">
+  <a href="https://github.com/ruslanlap/PowerToysRun-Pomodoro/releases/latest/download/Pomodoro-x64.zip">
     <img src="https://img.shields.io/badge/⬇️_DOWNLOAD-POMODORO_PLUGIN-blue?style=for-the-badge&logo=github" alt="Download Pomodoro Plugin">
   </a>
   
@@ -204,6 +204,18 @@ Contributions are welcome! Here's how you can help:
 3. Commit your changes: `git commit -m 'Add amazing feature'`
 4. Push to the branch: `git push origin feature/amazing-feature`
 5. Open a Pull Request
+
+### Conventional Commits & Automatic Releases
+
+This project uses [release-please](https://github.com/googleapis/release-please) bot for automated versioning and releases. Use [Conventional Commits](https://www.conventionalcommits.org/) format:
+
+| Commit type | Bump | Example |
+|-------------|------|---------|
+| `fix:` | Patch (1.0.**0** → 1.0.**1**) | `fix: correct timer display` |
+| `feat:` | Minor (1.**0**.0 → 1.**1**.0) | `feat: add break reminders` |
+| `BREAKING CHANGE:` | Major (**1**.0.0 → **2**.0.0) | `feat!: new config format` |
+
+When you push to `main`, the bot opens a "release PR" with a changelog and version bump. Merge it to publish a new release automatically.
 
 Please make sure to update tests as appropriate.
 
