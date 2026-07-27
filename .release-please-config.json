@@ -1,6 +1,44 @@
 {
   "release-type": "simple",
   "include-component-in-tag": false,
+  "changelog-sections": [
+    {
+      "type": "feat",
+      "section": "New Features"
+    },
+    {
+      "type": "fix",
+      "section": "Bug Fixes"
+    },
+    {
+      "type": "perf",
+      "section": "Performance Improvements"
+    },
+    {
+      "type": "refactor",
+      "section": "Code Refactoring"
+    },
+    {
+      "type": "docs",
+      "section": "Documentation"
+    },
+    {
+      "type": "build",
+      "section": "Build System"
+    },
+    {
+      "type": "ci",
+      "section": "CI/CD"
+    },
+    {
+      "type": "chore",
+      "section": "Maintenance"
+    },
+    {
+      "type": "revert",
+      "section": "Reverts"
+    }
+  ],
   "packages": {
     ".": {
       "extra-files": [
