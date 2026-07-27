@@ -123,7 +123,7 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
             new PluginAdditionalOption
             {
                 Key = nameof(MediaPlayOnSessionStart),
-                DisplayLabel = "▶ Play media on session start",
+                DisplayLabel = "▶ Toggle media on session start",
                 DisplayDescription = "Toggle play/pause on media (Spotify, YouTube, etc.) when a focus session starts",
                 PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Checkbox,
                 Value = MediaPlayOnSessionStart
@@ -328,6 +328,31 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
             }
 
             return new List<Result>();
+        }
+
+        /// <summary>
+        /// Executes a named command directly (bypassing Query/Result pipeline).
+        /// Used by the timer window to ensure hooks and media controls fire on
+        /// pause/resume/stop — Query only constructs a Result whose Action is
+        /// never invoked when called from the window.
+        /// </summary>
+        /// <param name="command">Command name (pause, resume, stop, etc.).</param>
+        /// <param name="parameters">Optional arguments.</param>
+        /// <returns>True if the command was found and executed.</returns>
+        public bool ExecuteCommand(string command, string parameters = "")
+        {
+            if (_commands.TryGetValue(command, out var action))
+            {
+                try
+                {
+                    return action(parameters);
+                }
+                catch (Exception ex)
+                {
+                    Log.Exception($"Error executing command '{command}'", ex, GetType());
+                }
+            }
+            return false;
         }
 
         /// <summary>
@@ -676,9 +701,6 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
                     length = customLength;
                 }
 
-                // Trigger media control and hooks for "start" event
-                TriggerEvent("start", "Pomodoro", length);
-
                 // Show notification without requiring user interaction
                 ShowNonModalNotification("Starting Pomodoro", $"{length} minute Pomodoro session");
 
@@ -697,6 +719,9 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
                                 StartTime = DateTime.Now,
                                 EndTime = DateTime.Now.AddMinutes(length)
                             };
+
+                            // Trigger media control and hooks only after timer is confirmed
+                            TriggerEvent("start", "Pomodoro", length);
 
                             ShowPomodoroWindow(CurrentSession);
                         }
@@ -741,9 +766,6 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
                     length = customLength;
                 }
 
-                // Trigger media control and hooks for "start" event
-                TriggerEvent("start", "Short Break", length);
-
                 // Show notification without requiring user interaction
                 ShowNonModalNotification("Starting Break", $"{length} minute short break");
 
@@ -762,6 +784,9 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
                                 StartTime = DateTime.Now,
                                 EndTime = DateTime.Now.AddMinutes(length)
                             };
+
+                            // Trigger media control and hooks only after timer is confirmed
+                            TriggerEvent("start", "Short Break", length);
 
                             ShowPomodoroWindow(CurrentSession);
                         }
@@ -806,9 +831,6 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
                     length = customLength;
                 }
 
-                // Trigger media control and hooks for "start" event
-                TriggerEvent("start", "Long Break", length);
-
                 // Show notification without requiring user interaction
                 ShowNonModalNotification("Starting Long Break", $"{length} minute long break");
 
@@ -827,6 +849,9 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
                                 StartTime = DateTime.Now,
                                 EndTime = DateTime.Now.AddMinutes(length)
                             };
+
+                            // Trigger media control and hooks only after timer is confirmed
+                            TriggerEvent("start", "Long Break", length);
 
                             ShowPomodoroWindow(CurrentSession);
                         }

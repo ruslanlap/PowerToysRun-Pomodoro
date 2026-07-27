@@ -84,7 +84,7 @@ Pomodoro is a plugin for [Microsoft PowerToys Run](https://github.com/microsoft/
 - ⚙️ **Configurable Session Length** - Customize work and break durations to fit your workflow
 - 🪟 **Resizable & Minimizable Timer Window** - Resize the timer window with the corner grip, minimize it to the taskbar, and it remembers your preferred size and position between sessions
 - 🎵 **Media Control** - Automatically play/pause media (Spotify, YouTube, etc.) when sessions start and end
-- 🪝 **CLI Hooks** - Run arbitrary CLI commands on timer events (start, end, pause, resume, stop)
+- 🪝 **CLI Hooks** - Run arbitrary CLI commands on timer events (start, end, pause, resume, stop), including dedicated break start/end hooks
 
 ## 🎬 Demo Gallery
 
@@ -290,34 +290,34 @@ Command strings support the following tokens, which are replaced with event deta
 
 ```
 # On break start — turn lights on
-hookOnBreakStart: hue lights on --brightness 100
+HookOnBreakStart: hue lights on --brightness 100
 
 # On Pomodoro start — dim lights for focus
-hookOnPomodoroStart: hue lights dim --brightness 30
+HookOnPomodoroStart: hue lights dim --brightness 30
 ```
 
 #### Time Tracking (Toggl)
 
 ```
 # On Pomodoro start — start a Toggl timer
-hookOnPomodoroStart: toggl start --description "Pomodoro ({minutes} min)"
+HookOnPomodoroStart: toggl start --description "Pomodoro ({minutes} min)"
 
 # On Pomodoro end — stop the Toggl timer
-hookOnPomodoroEnd: toggl stop
+HookOnPomodoroEnd: toggl stop
 ```
 
 #### Desktop Notification (BurntToast PowerShell)
 
 ```
 # On Pomodoro end
-hookOnPomodoroEnd: powershell -Command "New-BurntToastNotification -Text 'Pomodoro Complete!', 'Time for a break.'"
+HookOnPomodoroEnd: powershell -Command "New-BurntToastNotification -Text 'Pomodoro Complete!', 'Time for a break.'"
 ```
 
 #### Custom Sound
 
 ```
 # On break start — play a custom sound
-hookOnBreakStart: powershell -Command "(New-Object Media.SoundPlayer 'C:\Sounds\chime.wav').PlaySync()"
+HookOnBreakStart: powershell -Command "(New-Object Media.SoundPlayer 'C:\Sounds\chime.wav').PlaySync()"
 ```
 
 > **Note:** Hooks are executed via `cmd.exe /c <command>` in a hidden window, fire-and-forget (the plugin does not wait for them to complete).

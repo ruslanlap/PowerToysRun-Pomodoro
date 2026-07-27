@@ -9,7 +9,7 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro.Services
     /// <summary>
     /// Executes arbitrary CLI commands (hooks) on Pomodoro timer events.
     /// Users can define commands for session start, end, pause, resume, and stop,
-    /// separately for each session type (Pomodoro, Short Break, Long Break).
+    /// as well as dedicated break start/end hooks.
     /// </summary>
     public class HookService
     {
@@ -55,16 +55,18 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro.Services
                     UseShellExecute = false,
                     CreateNoWindow = true,
                     WindowStyle = ProcessWindowStyle.Hidden,
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = true,
                 };
 
                 var process = new Process { StartInfo = psi };
+                process.EnableRaisingEvents = true;
+                process.Exited += (sender, _) =>
+                {
+                    try { ((Process)sender!).Dispose(); }
+                    catch (ObjectDisposedException) { /* already disposed */ }
+                };
                 process.Start();
-                process.BeginOutputReadLine();
-                process.BeginErrorReadLine();
-                // Fire-and-forget: don't block the UI thread. The process runs
-                // asynchronously and we don't wait for its exit.
+                // Fire-and-forget: don't block the UI thread. The process disposes
+                // itself on exit via the Exited handler to avoid leaking handles.
             }
             catch (Exception ex)
             {
@@ -75,6 +77,12 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro.Services
         /// <summary>
         /// Replaces placeholder tokens in the command string with event values.
         /// </summary>
+        /// <remarks>
+        /// Token values are derived from internal plugin state (event name, session type,
+        /// session length) and are NOT user-supplied runtime input. The command template
+        /// itself is authored by the user in plugin settings and intentionally executed
+        /// verbatim through cmd.exe, so shell metacharacters in the template are by design.
+        /// </remarks>
         private static string ExpandTokens(string command, PomodoroEvent evt)
         {
             return command

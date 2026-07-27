@@ -97,7 +97,7 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro.Services
         private void SendMediaKey(int keyCode)
         {
             keybd_event((byte)keyCode, 0, KEYEVENTF_EXTENDEDKEY, 0);
-            keybd_event((byte)keyCode, 0, KEYEVENTF_KEYUP, 0);
+            keybd_event((byte)keyCode, 0, KEYEVENTF_KEYUP | KEYEVENTF_EXTENDEDKEY, 0);
         }
     }
 }
