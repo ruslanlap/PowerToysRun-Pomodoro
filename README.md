@@ -215,7 +215,7 @@ This project uses [release-please](https://github.com/googleapis/release-please)
 | `feat:` | Minor (1.**0**.0 → 1.**1**.0) | `feat: add break reminders` |
 | `BREAKING CHANGE:` | Major (**1**.0.0 → **2**.0.0) | `feat!: new config format` |
 
-When you push to `main`, the bot opens a "release PR" with a changelog and version bump. Merge it to publish a new release automatically.
+When you push to `master`, the bot opens a "release PR" with a changelog and version bump. Merge it to publish a new release automatically.
 
 Please make sure to update tests as appropriate.
 
