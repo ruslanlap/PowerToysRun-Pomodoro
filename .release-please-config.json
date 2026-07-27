@@ -1,13 +1,10 @@
 {
   "release-type": "simple",
   "include-component-in-tag": false,
+  "extra-files": [
+    "Pomodoro/Community.PowerToys.Run.Plugin.Pomodoro/plugin.json"
+  ],
   "packages": {
-    ".": {
-      "release-type": "simple",
-      "include-component-in-tag": false,
-      "extra-files": [
-        "Pomodoro/Community.PowerToys.Run.Plugin.Pomodoro/plugin.json"
-      ]
-    }
+    ".": {}
   }
 }
