@@ -123,16 +123,16 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
             new PluginAdditionalOption
             {
                 Key = nameof(MediaPlayOnSessionStart),
-                DisplayLabel = "▶ Toggle media on session start",
-                DisplayDescription = "Toggle play/pause on media (Spotify, YouTube, etc.) when a focus session starts",
+                DisplayLabel = "▶ Play media on session start/resume",
+                DisplayDescription = "Toggle play/pause on media (Spotify, YouTube, etc.) when a focus session starts or is resumed",
                 PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Checkbox,
                 Value = MediaPlayOnSessionStart
             },
             new PluginAdditionalOption
             {
                 Key = nameof(MediaPauseOnSessionEnd),
-                DisplayLabel = "⏸ Pause media on session end",
-                DisplayDescription = "Toggle play/pause on media when a focus session ends",
+                DisplayLabel = "⏸ Pause media on session end/pause",
+                DisplayDescription = "Toggle play/pause on media when a focus session ends or is paused",
                 PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Checkbox,
                 Value = MediaPauseOnSessionEnd
             },
@@ -423,6 +423,22 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
                 {
                     // Pause media when a Pomodoro (focus) session ends
                     if (MediaPauseOnSessionEnd && !isBreak)
+                    {
+                        MediaService?.TogglePlayPause();
+                    }
+                }
+                else if (eventName == "pause")
+                {
+                    // Pause media when a Pomodoro (focus) session is paused
+                    if (MediaPauseOnSessionEnd && !isBreak)
+                    {
+                        MediaService?.TogglePlayPause();
+                    }
+                }
+                else if (eventName == "resume")
+                {
+                    // Resume media when a Pomodoro (focus) session is resumed
+                    if (MediaPlayOnSessionStart && !isBreak)
                     {
                         MediaService?.TogglePlayPause();
                     }
