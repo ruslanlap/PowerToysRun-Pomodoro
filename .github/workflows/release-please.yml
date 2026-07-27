@@ -1,0 +1,27 @@
+name: Release Please
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        with:
+          release-type: simple
+          # Bump plugin.json version alongside the release
+          include-component-in-tag: false
+          # These files are updated with the new version on each release
+          extra-files: |
+            Pomodoro/Community.PowerToys.Run.Plugin.Pomodoro/plugin.json
+          # Custom version extraction — read from plugin.json "Version" field
+          version-file: Pomodoro/Community.PowerToys.Run.Plugin.Pomodoro/plugin.json
+          version-path: Version
