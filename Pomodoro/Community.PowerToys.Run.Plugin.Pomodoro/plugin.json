@@ -6,7 +6,7 @@
   "Author": "ruslanlap",
   "Version": "1.1.0",
   "Language": "csharp",
-  "Website": "https://github.com/ruslanlap/Community.PowerToys.Run.Plugin.Pomodoro",
+  "Website": "https://github.com/ruslanlap/PowerToysRun-Pomodoro",
   "ExecuteFileName": "Community.PowerToys.Run.Plugin.Pomodoro.dll",
   "IcoPathDark": "Images\\pomodoro.dark.png",
   "IcoPathLight": "Images\\pomodoro.light.png",
