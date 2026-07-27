@@ -4,7 +4,11 @@
   "packages": {
     ".": {
       "extra-files": [
-        "Pomodoro/Community.PowerToys.Run.Plugin.Pomodoro/plugin.json"
+        {
+          "type": "json",
+          "path": "Pomodoro/Community.PowerToys.Run.Plugin.Pomodoro/plugin.json",
+          "jsonpath": "$.Version"
+        }
       ]
     }
   }
