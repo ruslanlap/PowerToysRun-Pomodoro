@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/ruslanlap/PowerToysRun-Pomodoro/compare/v1.1.1...v1.1.2) (2026-07-27)
+
+
+### Bug Fixes
+
+* trigger media control on pause/resume events ([10eae74](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/10eae74df597cf9821e0506775e5f0336b7a104c))
+
 ## [1.1.1](https://github.com/ruslanlap/PowerToysRun-Pomodoro/compare/v1.1.0...v1.1.1) (2026-07-27)
 
 
