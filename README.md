@@ -83,6 +83,8 @@ Pomodoro is a plugin for [Microsoft PowerToys Run](https://github.com/microsoft/
 - 🌙 **Break Management** - Automatically switch between work sessions and breaks
 - ⚙️ **Configurable Session Length** - Customize work and break durations to fit your workflow
 - 🪟 **Resizable & Minimizable Timer Window** - Resize the timer window with the corner grip, minimize it to the taskbar, and it remembers your preferred size and position between sessions
+- 🎵 **Media Control** - Automatically play/pause media (Spotify, YouTube, etc.) when sessions start and end
+- 🪝 **CLI Hooks** - Run arbitrary CLI commands on timer events (start, end, pause, resume, stop), including dedicated break start/end hooks
 
 ## 🎬 Demo Gallery
 
@@ -236,6 +238,90 @@ Please make sure to update tests as appropriate.
 <p>Yes, this feature is available in the plugin. Your completed sessions are tracked and can be viewed through the plugin interface.</p>
 </details>
 
+## 🎵 Media Control
+
+The plugin can automatically control media playback (play/pause) when your focus sessions start and end. This works with **any** application that responds to Windows media keys — Spotify, YouTube (in your browser), Windows Media Player, foobar2000, and more.
+
+### Enable Media Control
+
+Open PowerToys Settings → PowerToys Run → Plugins → Pomodoro:
+
+| Setting | Description |
+|---------|-------------|
+| **▶ Play media on session start** | Toggles play/pause when a **Pomodoro** (focus) session starts |
+| **⏸ Pause media on session end** | Toggles play/pause when a **Pomodoro** (focus) session ends |
+
+> **Note:** Media control only triggers for **Pomodoro** (focus) sessions, not for breaks. This way your music starts when you begin working and pauses when your focus session is over — exactly the behavior described in [issue #2](https://github.com/ruslanlap/PowerToysRun-Pomodoro/issues/2).
+
+## 🪝 CLI Hooks (Advanced)
+
+For power users, the plugin can run **arbitrary CLI commands** on timer lifecycle events. This enables integrations like:
+
+- 🏠 **Smart home**: Turn lights on during breaks, dim them during focus
+- 📊 **Time tracking**: Log sessions to Toggl, Clockify, or a spreadsheet
+- 🔔 **Notifications**: Send a Slack/Discord/Teams message when sessions end
+- 🎵 **Custom media control**: Use `nircmd` or AutoHotkey for advanced media management
+
+### Hook Events
+
+| Event | Trigger | Setting Key |
+|-------|---------|-------------|
+| **Pomodoro Start** | When a Pomodoro focus session begins | `HookOnPomodoroStart` |
+| **Pomodoro End** | When a Pomodoro focus session completes | `HookOnPomodoroEnd` |
+| **Break Start** | When any break (short or long) begins | `HookOnBreakStart` |
+| **Break End** | When any break completes | `HookOnBreakEnd` |
+| **Pause** | When the timer is paused | `HookOnPause` |
+| **Resume** | When the timer is resumed | `HookOnResume` |
+| **Stop** | When the timer is manually stopped | `HookOnStop` |
+
+### Token Replacement
+
+Command strings support the following tokens, which are replaced with event details before execution:
+
+| Token | Description | Example value |
+|-------|-------------|---------------|
+| `{event}` | Event name | `start`, `end`, `pause`, `resume`, `stop` |
+| `{type}` | Session type | `Pomodoro`, `Short Break`, `Long Break` |
+| `{minutes}` | Session length in minutes | `25` |
+
+### Hook Examples
+
+#### Smart Lights (Hue CLI)
+
+```
+# On break start — turn lights on
+HookOnBreakStart: hue lights on --brightness 100
+
+# On Pomodoro start — dim lights for focus
+HookOnPomodoroStart: hue lights dim --brightness 30
+```
+
+#### Time Tracking (Toggl)
+
+```
+# On Pomodoro start — start a Toggl timer
+HookOnPomodoroStart: toggl start --description "Pomodoro ({minutes} min)"
+
+# On Pomodoro end — stop the Toggl timer
+HookOnPomodoroEnd: toggl stop
+```
+
+#### Desktop Notification (BurntToast PowerShell)
+
+```
+# On Pomodoro end
+HookOnPomodoroEnd: powershell -Command "New-BurntToastNotification -Text 'Pomodoro Complete!', 'Time for a break.'"
+```
+
+#### Custom Sound
+
+```
+# On break start — play a custom sound
+HookOnBreakStart: powershell -Command "(New-Object Media.SoundPlayer 'C:\Sounds\chime.wav').PlaySync()"
+```
+
+> **Note:** Hooks are executed via `cmd.exe /c <command>` in a hidden window, fire-and-forget (the plugin does not wait for them to complete).
+
 ## ✨ Why You'll Love Pomodoro Plugin
 
 - **Helps Maintain Focus**: Structure your work with dedicated focus periods
@@ -276,6 +362,8 @@ The plugin implements several PowerToys Run interfaces:
 
 ### Roadmap
 
+- [x] Media control (play/pause on session start/end) — [#2](https://github.com/ruslanlap/PowerToysRun-Pomodoro/issues/2)
+- [x] CLI hooks for custom integrations — [#2](https://github.com/ruslanlap/PowerToysRun-Pomodoro/issues/2)
 - [ ] Custom notification sounds
 - [ ] Weekly productivity analytics
 - [ ] Task labeling for Pomodoro sessions

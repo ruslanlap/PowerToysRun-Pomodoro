@@ -38,10 +38,25 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
 
         // New properties for enhanced features
         private SoundService? SoundService { get; set; }
+        private MediaControlService? MediaService { get; set; }
+        private HookService? Hooks { get; set; }
         public bool PlaySounds { get; private set; } = true;
         public bool AutoStartNextSession { get; private set; } = false;
         public int PomodorosBeforeLongBreak { get; private set; } = 4;
         private int CurrentPomodoroCount { get; set; } = 0;
+
+        // Media control settings
+        public bool MediaPlayOnSessionStart { get; private set; } = false;
+        public bool MediaPauseOnSessionEnd { get; private set; } = false;
+
+        // CLI hook settings
+        public string HookOnPomodoroStart { get; private set; } = string.Empty;
+        public string HookOnPomodoroEnd { get; private set; } = string.Empty;
+        public string HookOnBreakStart { get; private set; } = string.Empty;
+        public string HookOnBreakEnd { get; private set; } = string.Empty;
+        public string HookOnPause { get; private set; } = string.Empty;
+        public string HookOnResume { get; private set; } = string.Empty;
+        public string HookOnStop { get; private set; } = string.Empty;
 
         /// <summary>
         /// Exposes additional plugin settings in the PowerToys Settings UI.
@@ -103,6 +118,80 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
                 DisplayDescription = "Number of work phases before taking a long break",
                 PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Textbox,
                 TextValue = PomodorosBeforeLongBreak.ToString()
+            },
+            // ─── Media Control ───
+            new PluginAdditionalOption
+            {
+                Key = nameof(MediaPlayOnSessionStart),
+                DisplayLabel = "▶ Toggle media on session start",
+                DisplayDescription = "Toggle play/pause on media (Spotify, YouTube, etc.) when a focus session starts",
+                PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Checkbox,
+                Value = MediaPlayOnSessionStart
+            },
+            new PluginAdditionalOption
+            {
+                Key = nameof(MediaPauseOnSessionEnd),
+                DisplayLabel = "⏸ Pause media on session end",
+                DisplayDescription = "Toggle play/pause on media when a focus session ends",
+                PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Checkbox,
+                Value = MediaPauseOnSessionEnd
+            },
+            // ─── CLI Hooks ───
+            new PluginAdditionalOption
+            {
+                Key = nameof(HookOnPomodoroStart),
+                DisplayLabel = "On Pomodoro start — command",
+                DisplayDescription = "CLI command to run when a Pomodoro starts. Tokens: {event} {type} {minutes}",
+                PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Textbox,
+                TextValue = HookOnPomodoroStart
+            },
+            new PluginAdditionalOption
+            {
+                Key = nameof(HookOnPomodoroEnd),
+                DisplayLabel = "On Pomodoro end — command",
+                DisplayDescription = "CLI command to run when a Pomodoro ends. Tokens: {event} {type} {minutes}",
+                PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Textbox,
+                TextValue = HookOnPomodoroEnd
+            },
+            new PluginAdditionalOption
+            {
+                Key = nameof(HookOnBreakStart),
+                DisplayLabel = "On break start — command",
+                DisplayDescription = "CLI command to run when any break starts. Tokens: {event} {type} {minutes}",
+                PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Textbox,
+                TextValue = HookOnBreakStart
+            },
+            new PluginAdditionalOption
+            {
+                Key = nameof(HookOnBreakEnd),
+                DisplayLabel = "On break end — command",
+                DisplayDescription = "CLI command to run when any break ends. Tokens: {event} {type} {minutes}",
+                PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Textbox,
+                TextValue = HookOnBreakEnd
+            },
+            new PluginAdditionalOption
+            {
+                Key = nameof(HookOnPause),
+                DisplayLabel = "On pause — command",
+                DisplayDescription = "CLI command to run when the timer is paused. Tokens: {event} {type} {minutes}",
+                PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Textbox,
+                TextValue = HookOnPause
+            },
+            new PluginAdditionalOption
+            {
+                Key = nameof(HookOnResume),
+                DisplayLabel = "On resume — command",
+                DisplayDescription = "CLI command to run when the timer is resumed. Tokens: {event} {type} {minutes}",
+                PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Textbox,
+                TextValue = HookOnResume
+            },
+            new PluginAdditionalOption
+            {
+                Key = nameof(HookOnStop),
+                DisplayLabel = "On stop — command",
+                DisplayDescription = "CLI command to run when the timer is manually stopped. Tokens: {event} {type} {minutes}",
+                PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Textbox,
+                TextValue = HookOnStop
             }
         };
 
@@ -134,6 +223,12 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
 
             // Initialize the sound service
             SoundService = new SoundService(GetType());
+
+            // Initialize media control service
+            MediaService = new MediaControlService(GetType());
+
+            // Initialize hook service
+            Hooks = new HookService(GetType());
 
             // Initialize API service
             ApiService = new TickCounterApiService(GetType());
@@ -236,6 +331,31 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
         }
 
         /// <summary>
+        /// Executes a named command directly (bypassing Query/Result pipeline).
+        /// Used by the timer window to ensure hooks and media controls fire on
+        /// pause/resume/stop — Query only constructs a Result whose Action is
+        /// never invoked when called from the window.
+        /// </summary>
+        /// <param name="command">Command name (pause, resume, stop, etc.).</param>
+        /// <param name="parameters">Optional arguments.</param>
+        /// <returns>True if the command was found and executed.</returns>
+        public bool ExecuteCommand(string command, string parameters = "")
+        {
+            if (_commands.TryGetValue(command, out var action))
+            {
+                try
+                {
+                    return action(parameters);
+                }
+                catch (Exception ex)
+                {
+                    Log.Exception($"Error executing command '{command}'", ex, GetType());
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Return a list context menu entries for a given <see cref="Result"/> (shown at the right side of the result).
         /// </summary>
         /// <param name="selectedResult">The <see cref="Result"/> for the list with context menu entries.</param>
@@ -271,6 +391,68 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
         }
 
         /// <summary>
+        /// Triggers media control and CLI hooks for a given Pomodoro event.
+        /// Called from all session lifecycle points (start, end, pause, resume, stop).
+        /// </summary>
+        /// <param name="eventName">The event name: "start", "end", "pause", "resume", or "stop".</param>
+        /// <param name="sessionType">The session type (Pomodoro, Short Break, Long Break).</param>
+        /// <param name="lengthMinutes">The session length in minutes.</param>
+        private void TriggerEvent(string eventName, string sessionType, int lengthMinutes)
+        {
+            try
+            {
+                var evt = new PomodoroEvent
+                {
+                    EventName = eventName,
+                    SessionType = sessionType,
+                    LengthMinutes = lengthMinutes
+                };
+
+                // ─── Media control ───
+                bool isBreak = sessionType == "Short Break" || sessionType == "Long Break";
+
+                if (eventName == "start")
+                {
+                    // Play media when a Pomodoro (focus) session starts
+                    if (MediaPlayOnSessionStart && !isBreak)
+                    {
+                        MediaService?.TogglePlayPause();
+                    }
+                }
+                else if (eventName == "end")
+                {
+                    // Pause media when a Pomodoro (focus) session ends
+                    if (MediaPauseOnSessionEnd && !isBreak)
+                    {
+                        MediaService?.TogglePlayPause();
+                    }
+                }
+
+                // ─── CLI hooks ───
+                string? hookCommand = eventName switch
+                {
+                    "start" when isBreak => HookOnBreakStart,
+                    "start" => HookOnPomodoroStart,
+                    "end" when isBreak => HookOnBreakEnd,
+                    "end" => HookOnPomodoroEnd,
+                    "pause" => HookOnPause,
+                    "resume" => HookOnResume,
+                    "stop" => HookOnStop,
+                    _ => null
+                };
+
+                if (!string.IsNullOrWhiteSpace(hookCommand))
+                {
+                    Hooks?.ExecuteHook(hookCommand, evt);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Exception($"Error triggering event {eventName}", ex, GetType());
+            }
+        }
+
+        /// <summary>
         /// Handle timer completion and potentially start the next phase
         /// </summary>
         /// <param name="session">The completed session</param>
@@ -278,6 +460,9 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
         {
             try
             {
+                // Trigger media control and hooks for "end" event
+                TriggerEvent("end", session.Type, session.LengthMinutes);
+
                 // Play sound immediately when timer completes
                 if (PlaySounds)
                 {
@@ -405,6 +590,28 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
                 pomodoroSettings.PomodorosBeforeLongBreak = pomodorosBeforeLongBreak;
             }
 
+            // ─── Media control settings ───
+            pomodoroSettings.MediaPlayOnSessionStart = settings.AdditionalOptions
+                .SingleOrDefault(x => x.Key == nameof(MediaPlayOnSessionStart))?.Value ?? pomodoroSettings.MediaPlayOnSessionStart;
+            pomodoroSettings.MediaPauseOnSessionEnd = settings.AdditionalOptions
+                .SingleOrDefault(x => x.Key == nameof(MediaPauseOnSessionEnd))?.Value ?? pomodoroSettings.MediaPauseOnSessionEnd;
+
+            // ─── CLI hook settings ───
+            pomodoroSettings.HookOnPomodoroStart = settings.AdditionalOptions
+                .SingleOrDefault(x => x.Key == nameof(HookOnPomodoroStart))?.TextValue ?? string.Empty;
+            pomodoroSettings.HookOnPomodoroEnd = settings.AdditionalOptions
+                .SingleOrDefault(x => x.Key == nameof(HookOnPomodoroEnd))?.TextValue ?? string.Empty;
+            pomodoroSettings.HookOnBreakStart = settings.AdditionalOptions
+                .SingleOrDefault(x => x.Key == nameof(HookOnBreakStart))?.TextValue ?? string.Empty;
+            pomodoroSettings.HookOnBreakEnd = settings.AdditionalOptions
+                .SingleOrDefault(x => x.Key == nameof(HookOnBreakEnd))?.TextValue ?? string.Empty;
+            pomodoroSettings.HookOnPause = settings.AdditionalOptions
+                .SingleOrDefault(x => x.Key == nameof(HookOnPause))?.TextValue ?? string.Empty;
+            pomodoroSettings.HookOnResume = settings.AdditionalOptions
+                .SingleOrDefault(x => x.Key == nameof(HookOnResume))?.TextValue ?? string.Empty;
+            pomodoroSettings.HookOnStop = settings.AdditionalOptions
+                .SingleOrDefault(x => x.Key == nameof(HookOnStop))?.TextValue ?? string.Empty;
+
             // Тепер оновлюємо поля в Main, щоб використовувати нові значення
             ShowNotifications = pomodoroSettings.ShowNotifications;
             PomodoroLength = pomodoroSettings.PomodoroLength;
@@ -413,6 +620,19 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
             PlaySounds = pomodoroSettings.PlaySounds;
             AutoStartNextSession = pomodoroSettings.AutoStartNextSession;
             PomodorosBeforeLongBreak = pomodoroSettings.PomodorosBeforeLongBreak;
+
+            // Media control
+            MediaPlayOnSessionStart = pomodoroSettings.MediaPlayOnSessionStart;
+            MediaPauseOnSessionEnd = pomodoroSettings.MediaPauseOnSessionEnd;
+
+            // CLI hooks
+            HookOnPomodoroStart = pomodoroSettings.HookOnPomodoroStart;
+            HookOnPomodoroEnd = pomodoroSettings.HookOnPomodoroEnd;
+            HookOnBreakStart = pomodoroSettings.HookOnBreakStart;
+            HookOnBreakEnd = pomodoroSettings.HookOnBreakEnd;
+            HookOnPause = pomodoroSettings.HookOnPause;
+            HookOnResume = pomodoroSettings.HookOnResume;
+            HookOnStop = pomodoroSettings.HookOnStop;
         }
 
         /// <inheritdoc/>
@@ -500,6 +720,9 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
                                 EndTime = DateTime.Now.AddMinutes(length)
                             };
 
+                            // Trigger media control and hooks only after timer is confirmed
+                            TriggerEvent("start", "Pomodoro", length);
+
                             ShowPomodoroWindow(CurrentSession);
                         }
                         else
@@ -561,6 +784,9 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
                                 StartTime = DateTime.Now,
                                 EndTime = DateTime.Now.AddMinutes(length)
                             };
+
+                            // Trigger media control and hooks only after timer is confirmed
+                            TriggerEvent("start", "Short Break", length);
 
                             ShowPomodoroWindow(CurrentSession);
                         }
@@ -624,6 +850,9 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
                                 EndTime = DateTime.Now.AddMinutes(length)
                             };
 
+                            // Trigger media control and hooks only after timer is confirmed
+                            TriggerEvent("start", "Long Break", length);
+
                             ShowPomodoroWindow(CurrentSession);
                         }
                         else
@@ -667,6 +896,10 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
                         if (success)
                         {
                             CurrentSession.IsPaused = true;
+
+                            // Trigger hooks for "pause" event
+                            TriggerEvent("pause", CurrentSession.Type, CurrentSession.LengthMinutes);
+
                             Context.API.ShowMsg("Timer Paused", $"{CurrentSession.Type} timer paused", IconPath);
                         }
                         else
@@ -710,6 +943,10 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
                         if (success)
                         {
                             CurrentSession.IsPaused = false;
+
+                            // Trigger hooks for "resume" event
+                            TriggerEvent("resume", CurrentSession.Type, CurrentSession.LengthMinutes);
+
                             Context.API.ShowMsg("Timer Resumed", $"{CurrentSession.Type} timer resumed", IconPath);
                         }
                         else
@@ -752,6 +989,9 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
                         var success = await ApiService.StopTimerAsync(CurrentSession.TimerId);
                         if (success)
                         {
+                            // Trigger hooks for "stop" event
+                            TriggerEvent("stop", CurrentSession.Type, CurrentSession.LengthMinutes);
+
                             string message = $"{CurrentSession.Type} timer stopped";
                             Context.API.ShowMsg("Timer Stopped", message, IconPath);
                             CurrentSession = null;

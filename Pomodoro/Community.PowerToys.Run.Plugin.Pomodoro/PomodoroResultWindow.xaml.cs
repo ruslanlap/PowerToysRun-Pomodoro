@@ -591,14 +591,14 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
                 {
                     _session.IsPaused = false;
                     BtnPauseResume.Content = "Pause";
-                    _parent.Query(new Query("resume"));
+                    _parent.ExecuteCommand("resume");
                     UpdateTimeAfterResume();
                 }
                 else
                 {
                     _session.IsPaused = true;
                     BtnPauseResume.Content = "Resume";
-                    _parent.Query(new Query("pause"));
+                    _parent.ExecuteCommand("pause");
                 }
             }
             catch (Exception ex)
@@ -615,7 +615,7 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
             try
             {
                 _timer.Stop();
-                _parent?.Query(new Query("stop"));
+                _parent?.ExecuteCommand("stop");
                 _isClosing = true;
                 Close();
             }
