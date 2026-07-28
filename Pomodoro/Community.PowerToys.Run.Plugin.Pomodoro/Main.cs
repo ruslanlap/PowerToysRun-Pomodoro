@@ -206,6 +206,9 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
         private TickCounterApiService? ApiService { get; set; }
         private PomodoroSession? CurrentSession { get; set; }
 
+        // Track the current timer window to close it before opening a new one
+        private PomodoroResultWindow? _currentWindow;
+
         private bool Disposed { get; set; }
 
         private readonly Dictionary<string, Func<string, bool>> _commands = new(StringComparer.OrdinalIgnoreCase);
@@ -520,8 +523,14 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
                 }
                 else
                 {
-                    // Clean up if not auto-starting
+                    // Clean up if not auto-starting - close the window
                     CurrentSession = null;
+                    if (_currentWindow != null)
+                    {
+                        try { _currentWindow.Close(); }
+                        catch { /* ignore */ }
+                        _currentWindow = null;
+                    }
                 }
             }
             catch (Exception ex)
@@ -674,6 +683,14 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
             if (Context?.API != null)
             {
                 Context.API.ThemeChanged -= OnThemeChanged;
+            }
+
+            // Close timer window if open
+            if (_currentWindow != null)
+            {
+                try { _currentWindow.Close(); }
+                catch { /* ignore */ }
+                _currentWindow = null;
             }
 
             ApiService?.Dispose();
@@ -1077,10 +1094,33 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    // Create and show the Pomodoro window
+                    // Close existing window if any (fixes auto-start leaving multiple windows open)
+                    if (_currentWindow != null)
+                    {
+                        try
+                        {
+                            _currentWindow.Close();
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Exception("Error closing previous timer window", ex, GetType());
+                        }
+                    }
+
+                    // Create and show the new Pomodoro window
                     var window = new PomodoroResultWindow(this);
                     window.SetSession(session);
                     window.Show();
+                    _currentWindow = window;
+
+                    // Clear reference when window is closed (user clicked X or auto-close)
+                    window.Closing += (s, e) =>
+                    {
+                        if (ReferenceEquals(s, _currentWindow))
+                        {
+                            _currentWindow = null;
+                        }
+                    };
                 });
             }
             catch (Exception ex)
