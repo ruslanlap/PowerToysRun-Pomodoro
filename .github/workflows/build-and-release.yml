@@ -1,6 +1,12 @@
 name: Build and Upload Release Assets
 
 on:
+  workflow_call:
+    inputs:
+      tag_name:
+        description: Release tag to build and upload assets for.
+        required: true
+        type: string
   # Triggered when release-please creates a published release
   release:
     types: [published]
@@ -28,6 +34,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag_name || github.ref }}
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -108,8 +116,8 @@ jobs:
   upload:
     needs: build
     runs-on: ubuntu-latest
-    # Upload to release if triggered by release event OR manual dispatch
-    if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
+    # Upload to release if triggered by release event, release-please, or manual dispatch
+    if: github.event_name == 'release' || github.event_name == 'workflow_call' || github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout code
@@ -121,6 +129,8 @@ jobs:
         run: |
           if [[ "${{ github.event_name }}" == "release" ]]; then
             TAG="${{ github.event.release.tag_name }}"
+          elif [[ "${{ github.event_name }}" == "workflow_call" ]]; then
+            TAG="${{ inputs.tag_name }}"
           else
             # For manual dispatch: read version from plugin.json
             VERSION=$(python3 -c "import json; print(json.load(open('Pomodoro/Community.PowerToys.Run.Plugin.Pomodoro/plugin.json'))['Version'])")
