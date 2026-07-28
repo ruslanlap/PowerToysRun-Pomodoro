@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/ruslanlap/PowerToysRun-Pomodoro/compare/v1.1.2...v1.1.3) (2026-07-28)
+
+
+### Bug Fixes
+
+* close previous timer window before opening new one ([ca248c4](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/ca248c4d9f4ee8b3d2a1b5c6d7e8f9a0b1c2d3e4f))
+
 ## [1.1.2](https://github.com/ruslanlap/PowerToysRun-Pomodoro/compare/v1.1.1...v1.1.2) (2026-07-27)
 
 
