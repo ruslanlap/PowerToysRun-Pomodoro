@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.2](https://github.com/ruslanlap/PowerToysRun-Pomodoro/compare/v1.2.1...v1.2.2) (2026-07-28)
+
+
+### Bug Fixes
+
+* **ci:** upload assets from reusable workflow ([0f5c77f](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/0f5c77f5dc7ef6e0888531d2071e2d091cbb9d48))
+* **ci:** upload assets from reusable workflow ([0f3a695](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/0f3a695085163d1e02c376af891a2efda46d8324))
+
 ## [1.2.1](https://github.com/ruslanlap/PowerToysRun-Pomodoro/compare/v1.2.0...v1.2.1) (2026-07-28)
 
 

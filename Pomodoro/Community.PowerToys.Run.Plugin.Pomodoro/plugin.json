@@ -4,7 +4,7 @@
   "IsGlobal": false,
   "Name": "Pomodoro",
   "Author": "ruslanlap",
-  "Version": "1.2.1",
+  "Version": "1.2.2",
   "Language": "csharp",
   "Website": "https://github.com/ruslanlap/PowerToysRun-Pomodoro",
   "ExecuteFileName": "Community.PowerToys.Run.Plugin.Pomodoro.dll",
