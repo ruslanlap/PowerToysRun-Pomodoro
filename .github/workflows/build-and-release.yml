@@ -116,8 +116,8 @@ jobs:
   upload:
     needs: build
     runs-on: ubuntu-latest
-    # Upload to release if triggered by release event, release-please, or manual dispatch
-    if: github.event_name == 'release' || github.event_name == 'workflow_call' || github.event_name == 'workflow_dispatch'
+    # Called workflows retain the caller's event name, so detect release-please by its tag input.
+    if: github.event_name == 'release' || inputs.tag_name != '' || github.event_name == 'workflow_dispatch'
 
     steps:
       - name: Checkout code
@@ -129,7 +129,7 @@ jobs:
         run: |
           if [[ "${{ github.event_name }}" == "release" ]]; then
             TAG="${{ github.event.release.tag_name }}"
-          elif [[ "${{ github.event_name }}" == "workflow_call" ]]; then
+          elif [[ -n "${{ inputs.tag_name }}" ]]; then
             TAG="${{ inputs.tag_name }}"
           else
             # For manual dispatch: read version from plugin.json
