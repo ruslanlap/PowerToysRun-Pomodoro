@@ -1,5 +1,30 @@
 # Changelog
 
+## [1.2.0](https://github.com/ruslanlap/PowerToysRun-Pomodoro/compare/v1.1.2...v1.2.0) (2026-07-28)
+
+
+### New Features
+
+* add workflow_dispatch for manual trigger ([901d7cb](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/901d7cb336f5e01c3af853e9be9fcac74a31faf7))
+
+
+### Bug Fixes
+
+* close previous timer window before opening new one (fixes [#22](https://github.com/ruslanlap/PowerToysRun-Pomodoro/issues/22)) ([ca248c4](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/ca248c4274b4b1b8a37d2cb3a11a09bcbda41294))
+
+
+### CI/CD
+
+* add Dependabot auto-merge with Copilot review for major bumps ([2f1d155](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/2f1d155f73d273ffdcc7f87dd31f92dc225f318a))
+
+
+### Maintenance
+
+* add Dependabot for automated dependency updates ([0524382](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/05243828105a64bc240f298572ed46bd529e6ab7))
+* **deps:** Bump FluentAssertions from 7.0.0 to 8.10.0 ([#17](https://github.com/ruslanlap/PowerToysRun-Pomodoro/issues/17)) ([d73cdd6](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/d73cdd638700ff34919be09b710d5e9079b66bb4))
+* **deps:** Bump NUnit and Verify.NUnit ([#21](https://github.com/ruslanlap/PowerToysRun-Pomodoro/issues/21)) ([459ce5f](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/459ce5f1a9f8e91782c76c111f0df3dd8299e33d))
+* **release:** 1.1.3 ([67700bb](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/67700bb0e3c91e66c50d1f2810e797638135da0c))
+
 ## [1.1.3](https://github.com/ruslanlap/PowerToysRun-Pomodoro/compare/v1.1.2...v1.1.3) (2026-07-28)
 
 
