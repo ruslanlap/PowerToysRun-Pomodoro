@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.1](https://github.com/ruslanlap/PowerToysRun-Pomodoro/compare/v1.2.0...v1.2.1) (2026-07-28)
+
+
+### Bug Fixes
+
+* **ci:** trigger release asset build from release-please ([22a3ee3](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/22a3ee3028b0c5b3efbc960ae0dde8efea57db9f))
+* **ci:** trigger release asset build from release-please ([fcfed7a](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/fcfed7a3762c2338b76981dfd258ca8f5285aaed))
+
 ## [1.2.0](https://github.com/ruslanlap/PowerToysRun-Pomodoro/compare/v1.1.2...v1.2.0) (2026-07-28)
 
 
