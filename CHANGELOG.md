@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.3](https://github.com/ruslanlap/PowerToysRun-Pomodoro/compare/v1.2.2...v1.2.3) (2026-09-01)
+
+
+### CI/CD
+
+* add semantic PR title validation workflow ([8baf3d9](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/8baf3d974630ec2cb57e6678b072fb321975e7f6))
+
+
+### Maintenance
+
+* **deps:** Bump Verify.NUnit from 31.27.0 to 32.0.0 ([#36](https://github.com/ruslanlap/PowerToysRun-Pomodoro/issues/36)) ([ac916f0](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/ac916f06a911edc014d5f2a2f4195b77605da53e))
+
 ## [1.2.2](https://github.com/ruslanlap/PowerToysRun-Pomodoro/compare/v1.2.1...v1.2.2) (2026-07-28)
 
 
