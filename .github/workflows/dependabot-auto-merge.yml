@@ -31,7 +31,8 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           wait-interval: 15
-          running-workflow-name: 'Dependabot Auto-Merge'
+          # Despite the input name, this must match the job's check-run name.
+          running-workflow-name: 'dependabot-pr'
 
       # CI PASSED → handle based on bump type
       - name: 🟢 Auto-merge patch/minor (CI green)
