@@ -20,3 +20,10 @@
 *.PDF	 diff=astextplain
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
+
+# Verify snapshot files must stay LF on all platforms (Verify 33+ rejects CR)
+*.verified.cs    text eol=lf
+*.verified.csproj text eol=lf
+*.verified.json  text eol=lf
+*.verified.ps1   text eol=lf
+*.verified.sln   text eol=lf
