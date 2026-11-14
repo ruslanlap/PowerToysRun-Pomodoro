@@ -3,6 +3,9 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Verify 33.x SponsorCheck: this repo is open source with no revenue -->
+    <Verify_SponsorshipExemption>OpenSource</Verify_SponsorshipExemption>
+    <Verify_SponsorshipExemptionUntil>2027-11</Verify_SponsorshipExemptionUntil>
   </PropertyGroup>
 
   <ItemGroup>
