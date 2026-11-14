@@ -26,10 +26,10 @@ jobs:
           dotnet-version: '9.0.x'
 
       - name: Build Pomodoro solution
-        run: dotnet build Pomodoro/Pomodoro.sln -c Release
+        run: dotnet build Pomodoro/Pomodoro.sln -c Release -p:Platform=x64
 
       - name: Test Pomodoro plugin
-        run: dotnet test Pomodoro/Pomodoro.sln -c Release --no-build
+        run: dotnet test Pomodoro/Pomodoro.sln -c Release -p:Platform=x64 --no-build
 
       - name: Test plugin templates
         run: dotnet test tests/Community.PowerToys.Run.Plugin.Templates.Tests.csproj -c Release
