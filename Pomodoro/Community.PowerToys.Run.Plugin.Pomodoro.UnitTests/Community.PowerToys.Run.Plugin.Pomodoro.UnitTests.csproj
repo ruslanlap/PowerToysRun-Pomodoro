@@ -9,6 +9,10 @@
   <ItemGroup>
     <PackageReference Include="MSTest" Version="3.6.3" />
     <PackageReference Include="System.IO.Abstractions" Version="21.0.29" />
+    <!-- Wox.Plugin.Logger needs NLog at runtime; the transitive reference from
+         the plugin project is not copied to the test output, so tests calling
+         Query() fail with FileNotFoundException. Pin it explicitly. -->
+    <PackageReference Include="NLog" Version="5.2.8" />
   </ItemGroup>
 
   <ItemGroup>
