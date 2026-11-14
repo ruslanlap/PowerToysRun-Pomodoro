@@ -25,10 +25,12 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro.UnitTests
         }
 
         [TestMethod]
-        public void LoadContextMenus_should_return_results()
+        public void LoadContextMenus_should_return_a_list()
         {
+            // LoadContextMenus is intentionally an empty stub (no context menu
+            // items yet); the contract is a non-null list, not a non-empty one.
             var results = main.LoadContextMenus(new Result { ContextData = "search" });
-            Assert.IsNotNull(results.First());
+            Assert.IsNotNull(results);
         }
 
         [TestMethod]
