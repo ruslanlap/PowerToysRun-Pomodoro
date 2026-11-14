@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Build Pomodoro solution
+        run: dotnet build Pomodoro/Pomodoro.sln -c Release
+
+      - name: Test Pomodoro plugin
+        run: dotnet test Pomodoro/Pomodoro.sln -c Release --no-build
+
+      - name: Test plugin templates
+        run: dotnet test tests/Community.PowerToys.Run.Plugin.Templates.Tests.csproj -c Release
