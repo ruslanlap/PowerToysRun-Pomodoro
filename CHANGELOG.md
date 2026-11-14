@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.2.3](https://github.com/ruslanlap/PowerToysRun-Pomodoro/compare/v1.2.2...v1.2.3) (2026-11-14)
+
+
+### Bug Fixes
+
+* **ci:** prevent Dependabot check from waiting on itself ([7aadf13](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/7aadf1381ac470cabd9542ce29561328a47ec789))
+
+
+### CI/CD
+
+* add semantic PR title validation workflow ([8baf3d9](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/8baf3d974630ec2cb57e6678b072fb321975e7f6))
+
+
+### Maintenance
+
+* **deps:** Bump Verify.NUnit from 31.27.0 to 32.0.0 ([#36](https://github.com/ruslanlap/PowerToysRun-Pomodoro/issues/36)) ([ac916f0](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/ac916f06a911edc014d5f2a2f4195b77605da53e))
+* **deps:** clear dependency backlog and fix dependabot auto-merge deadlock ([#46](https://github.com/ruslanlap/PowerToysRun-Pomodoro/issues/46)) ([c432528](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/c4325286ae7d2624e39832d2584545bd146a9b9a))
+
 ## [1.2.2](https://github.com/ruslanlap/PowerToysRun-Pomodoro/compare/v1.2.1...v1.2.2) (2026-07-28)
 
 
