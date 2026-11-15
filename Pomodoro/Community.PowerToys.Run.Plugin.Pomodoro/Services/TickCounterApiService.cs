@@ -84,9 +84,13 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro.Services
             lock (_sync)
             try
             {
-                if (_activeTimers.TryGetValue(timerId, out var timer) && !timer.IsPaused && !timer.IsCompleted)
+                if (_activeTimers.TryGetValue(timerId, out var timer) && !timer.IsPaused)
                 {
-                    timer.RemainingAtPause = timer.RemainingSeconds;
+                    var remaining = timer.RemainingSeconds;
+                    if (remaining <= 0)
+                        return Task.FromResult(false);
+
+                    timer.RemainingAtPause = remaining;
                     timer.PauseTime = DateTime.Now;
                     timer.IsPaused = true;
                     return Task.FromResult(true);
