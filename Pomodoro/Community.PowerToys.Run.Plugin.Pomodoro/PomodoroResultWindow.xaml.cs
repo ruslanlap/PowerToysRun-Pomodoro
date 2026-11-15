@@ -27,7 +27,6 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
         private readonly Main _parent = null!; // Using null-forgiving operator
         private PomodoroSession? _session;
         private readonly DispatcherTimer _timer = null!; // Using null-forgiving operator
-        private DateTime _endTime;
         private TimeSpan _totalDuration;
         private SolidColorBrush _timerBrush = null!; // Using null-forgiving operator
         private readonly List<Ellipse> _dots = new();
@@ -169,7 +168,6 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
                 _timer.Tick += Timer_Tick;
 
                 // Set default values
-                _endTime = DateTime.MinValue;
                 _totalDuration = TimeSpan.Zero;
                 _totalSeconds = 0;
                 _remainingSeconds = 0;
@@ -333,7 +331,6 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
                 {
                     TxtTimerType.Text = session.Type;
 
-                    _endTime = session.EndTime;
                     _totalDuration = TimeSpan.FromMinutes(session.LengthMinutes);
                     _totalSeconds = (int)_totalDuration.TotalSeconds;
                     _remainingSeconds = _totalSeconds;
@@ -473,14 +470,14 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
 
             try
             {
-                if (_session.IsPaused)
+                var status = _parent.GetTimerStatus(_session);
+                if (status == null)
                     return;
 
-                // Force an immediate update of the timer display
                 UpdateTimerDisplay();
+                BtnPauseResume.Content = status.IsPaused ? "Resume" : "Pause";
 
-                // Check if timer has completed
-                if (DateTime.Now >= _endTime)
+                if (status.IsCompleted)
                 {
                     _timer.Stop();
 
@@ -528,26 +525,6 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
             }
         }
 
-        public void UpdateTimeAfterResume()
-        {
-            if (_session == null || _isClosing)
-                return;
-
-            try
-            {
-                // Recalculate the end time based on current remaining time
-                var currentRemaining = _remainingSeconds;
-                _endTime = DateTime.Now.AddSeconds(currentRemaining);
-
-                // Force UI update
-                UpdateTimerDisplay();
-            }
-            catch (Exception ex)
-            {
-                Log.Exception("Error updating timer after resume", ex, GetType());
-            }
-        }
-
         private void UpdateTimerDisplay()
         {
             if (_isClosing || TxtTimeRemaining == null || ProgressBarTimer == null || StatusBarTimer == null)
@@ -555,12 +532,12 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
 
             try
             {
-                // Calculate remaining time
-                TimeSpan remaining = _endTime - DateTime.Now;
-                if (remaining.TotalSeconds <= 0)
-                {
-                    remaining = TimeSpan.Zero;
-                }
+                if (_session == null)
+                    return;
+                var status = _parent.GetTimerStatus(_session);
+                if (status == null)
+                    return;
+                TimeSpan remaining = TimeSpan.FromSeconds(status.RemainingSeconds);
 
                 // Update display on UI thread
                 Dispatcher.Invoke(() =>
@@ -587,18 +564,13 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
 
             try
             {
-                if (_session.IsPaused)
+                var status = _parent.GetTimerStatus(_session);
+                if (status == null)
+                    return;
+                if (_parent.ExecuteCommand(status.IsPaused ? "resume" : "pause"))
                 {
-                    _session.IsPaused = false;
-                    BtnPauseResume.Content = "Pause";
-                    _parent.ExecuteCommand("resume");
-                    UpdateTimeAfterResume();
-                }
-                else
-                {
-                    _session.IsPaused = true;
-                    BtnPauseResume.Content = "Resume";
-                    _parent.ExecuteCommand("pause");
+                    BtnPauseResume.Content = status.IsPaused ? "Pause" : "Resume";
+                    UpdateTimerDisplay();
                 }
             }
             catch (Exception ex)
