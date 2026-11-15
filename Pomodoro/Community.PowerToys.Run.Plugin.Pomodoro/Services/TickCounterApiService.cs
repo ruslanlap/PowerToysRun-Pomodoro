@@ -13,6 +13,7 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro.Services
     {
         private readonly Type _callingType;
         private readonly Dictionary<string, Timer> _activeTimers = new();
+        private readonly object _sync = new();
         private bool _disposed;
 
         private class Timer
@@ -50,6 +51,7 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro.Services
 
         public Task<TimerResponse?> CreateTimerAsync(string title, int durationSeconds)
         {
+            lock (_sync)
             try
             {
                 var timerId = Guid.NewGuid().ToString();
@@ -79,13 +81,14 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro.Services
 
         public Task<bool> PauseTimerAsync(string timerId)
         {
+            lock (_sync)
             try
             {
-                if (_activeTimers.TryGetValue(timerId, out var timer))
+                if (_activeTimers.TryGetValue(timerId, out var timer) && !timer.IsPaused && !timer.IsCompleted)
                 {
-                    timer.IsPaused = true;
-                    timer.PauseTime = DateTime.Now;
                     timer.RemainingAtPause = timer.RemainingSeconds;
+                    timer.PauseTime = DateTime.Now;
+                    timer.IsPaused = true;
                     return Task.FromResult(true);
                 }
 
@@ -100,6 +103,7 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro.Services
 
         public Task<bool> ResumeTimerAsync(string timerId)
         {
+            lock (_sync)
             try
             {
                 if (_activeTimers.TryGetValue(timerId, out var timer) && timer.PauseTime.HasValue)
@@ -132,6 +136,7 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro.Services
         
         public Task<bool> StopTimerAsync(string timerId)
         {
+            lock (_sync)
             try
             {
                 var result = _activeTimers.Remove(timerId);
@@ -145,6 +150,7 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro.Services
         }
         public Task<TimerStatus?> GetTimerStatusAsync(string timerId)
         {
+            lock (_sync)
             try
             {
                 if (_activeTimers.TryGetValue(timerId, out var timer))
@@ -180,8 +186,11 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro.Services
             if (_disposed)
                 return;
 
-            _activeTimers.Clear();
-            _disposed = true;
+            lock (_sync)
+            {
+                _activeTimers.Clear();
+                _disposed = true;
+            }
         }
     }
 

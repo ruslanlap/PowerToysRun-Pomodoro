@@ -910,96 +910,36 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
             }
         }
 
-        private bool PauseTimer(string parameters)
+        internal TimerStatus? GetTimerStatus(PomodoroSession session)
         {
-            if (Context == null || ApiService == null || CurrentSession == null)
-            {
-                Log.Error("Context, ApiService, or CurrentSession is null", GetType());
-                Context?.API.ShowMsg("Pomodoro Error", "No active timer to pause", IconPath);
-                return false;
-            }
-
-            try
-            {
-                Task.Run(async () =>
-                {
-                    try
-                    {
-                        var success = await ApiService.PauseTimerAsync(CurrentSession.TimerId);
-                        if (success)
-                        {
-                            CurrentSession.IsPaused = true;
-
-                            // Trigger hooks for "pause" event
-                            TriggerEvent("pause", CurrentSession.Type, CurrentSession.LengthMinutes);
-
-                            Context.API.ShowMsg("Timer Paused", $"{CurrentSession.Type} timer paused", IconPath);
-                        }
-                        else
-                        {
-                            Context.API.ShowMsg("Pomodoro Error", "Failed to pause timer", IconPath);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Exception("Error pausing timer", ex, GetType());
-                        Context.API.ShowMsg("Pomodoro Error", "Error: " + ex.Message, IconPath);
-                    }
-                });
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Log.Exception("Error in PauseTimer", ex, GetType());
-                Context.API.ShowMsg("Pomodoro Error", "Error: " + ex.Message, IconPath);
-                return false;
-            }
+            return ApiService?.GetTimerStatusAsync(session.TimerId).GetAwaiter().GetResult();
         }
 
-        private bool ResumeTimer(string parameters)
+        private bool PauseTimer(string parameters) => ChangePauseState(true);
+
+        private bool ResumeTimer(string parameters) => ChangePauseState(false);
+
+        private bool ChangePauseState(bool pause)
         {
-            if (Context == null || ApiService == null || CurrentSession == null)
-            {
-                Log.Error("Context, ApiService, or CurrentSession is null", GetType());
-                Context?.API.ShowMsg("Pomodoro Error", "No paused timer to resume", IconPath);
+            var session = CurrentSession;
+            var service = ApiService;
+            if (Context == null || service == null || session == null)
                 return false;
-            }
 
             try
             {
-                Task.Run(async () =>
-                {
-                    try
-                    {
-                        var success = await ApiService.ResumeTimerAsync(CurrentSession.TimerId);
-                        if (success)
-                        {
-                            CurrentSession.IsPaused = false;
+                bool success = (pause ? service.PauseTimerAsync(session.TimerId) : service.ResumeTimerAsync(session.TimerId)).GetAwaiter().GetResult();
+                if (!success)
+                    return false;
 
-                            // Trigger hooks for "resume" event
-                            TriggerEvent("resume", CurrentSession.Type, CurrentSession.LengthMinutes);
-
-                            Context.API.ShowMsg("Timer Resumed", $"{CurrentSession.Type} timer resumed", IconPath);
-                        }
-                        else
-                        {
-                            Context.API.ShowMsg("Pomodoro Error", "Failed to resume timer", IconPath);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Exception("Error resuming timer", ex, GetType());
-                        Context.API.ShowMsg("Pomodoro Error", "Error: " + ex.Message, IconPath);
-                    }
-                });
-
+                string action = pause ? "pause" : "resume";
+                TriggerEvent(action, session.Type, session.LengthMinutes);
+                Context.API.ShowMsg(pause ? "Timer Paused" : "Timer Resumed", $"{session.Type} timer {(pause ? "paused" : "resumed")}", IconPath);
                 return true;
             }
             catch (Exception ex)
             {
-                Log.Exception("Error in ResumeTimer", ex, GetType());
-                Context.API.ShowMsg("Pomodoro Error", "Error: " + ex.Message, IconPath);
+                Log.Exception("Error changing timer state", ex, GetType());
                 return false;
             }
         }
@@ -1067,8 +1007,14 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
                     return true;
                 }
 
-                var remainingTime = CurrentSession.EndTime - DateTime.Now;
-                string status = CurrentSession.IsPaused ? "paused" : "active";
+                var timerStatus = GetTimerStatus(CurrentSession);
+                if (timerStatus == null)
+                {
+                    Context.API.ShowMsg("Pomodoro Status", "No active timer", IconPath);
+                    return true;
+                }
+                var remainingTime = TimeSpan.FromSeconds(timerStatus.RemainingSeconds);
+                string status = timerStatus.IsPaused ? "paused" : "active";
                 string remainingStr = remainingTime.TotalMinutes > 0
                     ? $"{Math.Floor(remainingTime.TotalMinutes)}m {remainingTime.Seconds}s remaining"
                     : "Time's up!";
