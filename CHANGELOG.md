@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.2.4](https://github.com/ruslanlap/PowerToysRun-Pomodoro/compare/v1.2.3...v1.2.4) (2026-11-15)
+
+
+### Bug Fixes
+
+* close stopped windows and guard pause expiry ([#51](https://github.com/ruslanlap/PowerToysRun-Pomodoro/issues/51)) ([f416de6](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/f416de6a10d940d351374543c4683bbda6eb5b9b))
+* prevent frozen timer after stop or expiry ([8d160e3](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/8d160e3eea0f1f81df962f58934049f978c14664))
+* use authoritative timer state for pause and status ([631e09c](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/631e09c9e5e85ca0dbfe7516746248a65937fa8b))
+* use one timer state for pause and status ([77b1a90](https://github.com/ruslanlap/PowerToysRun-Pomodoro/commit/77b1a907a755cf5e64229cc96e72debba8f6b5bb))
+
 ## [1.2.3](https://github.com/ruslanlap/PowerToysRun-Pomodoro/compare/v1.2.2...v1.2.3) (2026-11-14)
 
 
