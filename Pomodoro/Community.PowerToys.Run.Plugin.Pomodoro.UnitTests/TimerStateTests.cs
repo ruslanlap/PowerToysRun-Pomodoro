@@ -36,6 +36,9 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro.UnitTests
         public async Task PausingNearExpiryNeverLeavesACompletedTimerPaused()
         {
             using var service = new TickCounterApiService(typeof(TimerStateTests));
+            var expired = (await service.CreateTimerAsync("expired", 0))!.TimerId;
+            Assert.IsFalse(await service.PauseTimerAsync(expired));
+            Assert.IsTrue((await service.GetTimerStatusAsync(expired))!.IsCompleted);
             var ids = new System.Collections.Generic.List<string>();
             for (int i = 0; i < 5000; i++)
                 ids.Add((await service.CreateTimerAsync("test", 1))!.TimerId);
@@ -60,18 +63,26 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro.UnitTests
                     if (System.Windows.Application.Current == null)
                         _ = new System.Windows.Application();
                     var main = new Main();
+                    using var service = new TickCounterApiService(typeof(TimerStateTests));
+                    var timer = service.CreateTimerAsync("test", 60).GetAwaiter().GetResult()!;
+                    var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+                    typeof(Main).GetProperty("ApiService", flags)!.SetValue(main, service);
                     var window = new PomodoroResultWindow(main);
                     var session = new Community.PowerToys.Run.Plugin.Pomodoro.Models.PomodoroSession
                     {
-                        TimerId = "missing", Type = "Pomodoro", LengthMinutes = 1
+                        TimerId = timer.TimerId, Type = "Pomodoro", LengthMinutes = 1
                     };
+                    typeof(Main).GetProperty("CurrentSession", flags)!.SetValue(main, session);
                     window.SetSession(session);
                     bool closed = false;
                     window.Closed += (_, _) => closed = true;
                     window.Show();
-                    typeof(PomodoroResultWindow).GetMethod("Timer_Tick", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!
-                        .Invoke(window, new object?[] { null, System.EventArgs.Empty });
+                    Assert.IsTrue(service.StopTimerAsync(timer.TimerId).GetAwaiter().GetResult());
+                    typeof(PomodoroResultWindow).GetMethod("Timer_Tick", flags)!
+                        .Invoke(window, new object[] { null, System.EventArgs.Empty });
                     Assert.IsTrue(closed, "A removed timer must not leave a frozen window.");
+                    Assert.AreSame(session, typeof(Main).GetProperty("CurrentSession", flags)!.GetValue(main),
+                        "Stopping must not invoke completion.");
                 }
                 catch (System.Exception ex) { failure = ex; }
             });

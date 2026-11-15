@@ -472,7 +472,10 @@ namespace Community.PowerToys.Run.Plugin.Pomodoro
             {
                 var status = _parent.GetTimerStatus(_session);
                 if (status == null)
+                {
+                    Close();
                     return;
+                }
 
                 UpdateTimerDisplay();
                 BtnPauseResume.Content = status.IsPaused ? "Resume" : "Pause";
