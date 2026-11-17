@@ -16,7 +16,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Verify.NUnit" Version="33.1.5" />
+    <PackageReference Include="Verify.NUnit" Version="33.5.0" />
   </ItemGroup>
 
   <ItemGroup>
